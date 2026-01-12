@@ -1,0 +1,28 @@
+services:
+  node-1:
+    build: .
+    image: slurm-llm-image
+    pull_policy: never
+    container_name: node-1
+    hostname: node-1
+    ports:
+      - "6817:6817"
+    volumes:
+      - ./configs/slurm.conf:/etc/slurm/slurm.conf:ro
+      - ./configs/cgroup.conf:/etc/slurm/cgroup.conf:ro
+      - ./workspace:/data
+    shm_size: '2gb'
+
+  node-2:
+    build: .
+    image: slurm-llm-image
+    pull_policy: never
+    container_name: node-2
+    hostname: node-2
+    depends_on:
+      - node-1
+    volumes:
+      - ./configs/slurm.conf:/etc/slurm/slurm.conf:ro
+      - ./configs/cgroup.conf:/etc/slurm/cgroup.conf:ro
+      - ./workspace:/data
+    shm_size: '2gb'
