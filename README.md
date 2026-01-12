@@ -52,7 +52,7 @@ This is meant for learning distributed training concepts without access to a rea
 ### 1. Clone and Build
 
 ```bash
-git clone <your-repo-url>
+git clone https://github.com/aahmed-se/docker-slurm-llm
 cd docker-slurm-llm
 docker compose build
 ```
@@ -78,7 +78,7 @@ node-2         1    debug*        idle    1
 ### 3. Prepare Training Data
 
 ```bash
-docker exec node-1 python3 /data/prepare_data.py
+docker exec -it node-1 python3 /data/prepare_data.py
 ```
 
 This downloads the Tiny Shakespeare dataset and builds the vocabulary.
@@ -86,13 +86,13 @@ This downloads the Tiny Shakespeare dataset and builds the vocabulary.
 ### 4. Submit Training Job
 
 ```bash
-docker exec node-1 sbatch /data/train.sh
+docker exec -it node-1 bash -c "cd /data && sbatch job.sh"
 ```
 
 Monitor the job:
 ```bash
 docker exec node-1 squeue
-docker exec node-1 tail -f /data/training_job.log
+tail -f workspace/training_job.log
 ```
 
 ### 5. Verify Distribution
@@ -100,7 +100,7 @@ docker exec node-1 tail -f /data/training_job.log
 Check the log file for evidence of multi-node execution:
 
 ```bash
-docker exec node-1 grep "SLURMD_NODENAME" /data/training_job.log
+grep "SLURMD_NODENAME" workspace/training_job.log
 ```
 
 You should see:
